@@ -31,7 +31,7 @@ pub fn part_one(input: &str) -> Option<u32> {
 
 pub fn part_two(input: &str) -> Option<u32> {
     let mut map = HashMap::new();
-    let mut left_arr = Vec::with_capacity(input.lines().count());
+    let mut left_arr = Vec::new();
 
     for line in input.lines() {
         let mut split = line.split("   ");
