@@ -32,14 +32,13 @@ pub fn part_two(input: &str) -> Option<u32> {
             .collect::<Vec<_>>()
     });
 
-    let left_vec = out.clone().map(|v| v[0]).collect::<Vec<_>>();
+    let left_vec = out.clone().map(|v| v[0]);
     let right_vec = out.map(|v| v[1]);
 
     Some(
         left_vec
-            .iter()
             .map(|left| {
-                let count = parse_i32(right_vec.clone().filter(|x| x == left).count()).unwrap();
+                let count = parse_i32(right_vec.clone().filter(|x| *x == left).count()).unwrap();
 
                 left * count
             })
