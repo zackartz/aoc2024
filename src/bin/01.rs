@@ -2,23 +2,27 @@ use std::error::Error;
 advent_of_code::solution!(1);
 
 pub fn part_one(input: &str) -> Option<u32> {
-    let out = input.lines().map(|l| {
-        l.split("   ")
-            .map(|c| c.to_string().parse::<i32>().unwrap())
-            .collect::<Vec<_>>()
-    });
+    let (mut left, mut right) = input
+        .lines()
+        .map(|l| {
+            let mut split = l.split("   ");
+            let left = split.next();
+            let right = split.next();
 
-    let mut left_vec = out.clone().map(|v| v[0]).collect::<Vec<_>>();
-    let mut right_vec = out.map(|v| v[1]).collect::<Vec<_>>();
+            (
+                left.unwrap().parse::<i32>().unwrap(),
+                right.unwrap().parse::<i32>().unwrap(),
+            )
+        })
+        .collect::<(Vec<_>, Vec<_>)>();
 
-    left_vec.sort();
-    right_vec.sort();
+    left.sort();
+    right.sort();
 
     Some(
-        left_vec
-            .iter()
-            .zip(right_vec)
-            .map(|(left, right)| (left - right).abs())
+        left.iter()
+            .zip(right)
+            .map(|(left, right)| (*left - right).abs())
             .sum::<i32>()
             .try_into()
             .unwrap(),
