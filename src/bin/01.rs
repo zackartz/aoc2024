@@ -1,4 +1,4 @@
-use std::error::Error;
+use std::collections::HashMap;
 advent_of_code::solution!(1);
 
 pub fn part_one(input: &str) -> Option<u32> {
@@ -30,42 +30,28 @@ pub fn part_one(input: &str) -> Option<u32> {
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    let out = input.lines().map(|l| {
-        l.split("   ")
-            .map(|c| c.to_string().parse::<i32>().unwrap())
-            .collect::<Vec<_>>()
-    });
+    let mut map = HashMap::new();
+    let mut left_arr = Vec::with_capacity(input.lines().count());
 
-    let left_vec = out.clone().map(|v| v[0]);
-    let right_vec = out.map(|v| v[1]);
+    for line in input.lines() {
+        let mut split = line.split("   ");
+        let left = split.next().unwrap();
+        let right = split.next().unwrap();
+
+        let count = map.entry(right).or_insert(0);
+        *count += 1;
+
+        left_arr.push(left);
+    }
 
     Some(
-        left_vec
-            .map(|left| {
-                let count = parse_i32(right_vec.clone().filter(|x| *x == left).count()).unwrap();
-
-                left * count
-            })
+        left_arr
+            .iter()
+            .map(|l| l.parse::<i32>().unwrap() * (*map.get(l).unwrap_or(&0)))
             .sum::<i32>()
             .try_into()
             .unwrap(),
     )
-}
-
-// usize is a u16 or u32, which always fits in a u32
-#[cfg(any(target_pointer_width = "16", target_pointer_width = "32"))]
-fn parse_i32(a: usize) -> Result<i32, Box<dyn Error>> {
-    Ok(a as i32)
-}
-
-// usize is a u64, which might be too big
-#[cfg(target_pointer_width = "64")]
-fn parse_i32(a: usize) -> Result<i32, Box<dyn Error>> {
-    if a > i32::MAX as usize {
-        panic!("size bad")
-    } else {
-        Ok(a as i32)
-    }
 }
 
 #[cfg(test)]
