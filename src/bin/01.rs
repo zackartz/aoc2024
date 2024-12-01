@@ -39,7 +39,7 @@ pub fn part_two(input: &str) -> Option<u32> {
         left_vec
             .iter()
             .map(|left| {
-                let count = my_thing(right_vec.clone().filter(|x| x == left).count()).unwrap();
+                let count = parse_i32(right_vec.clone().filter(|x| x == left).count()).unwrap();
 
                 left * count
             })
@@ -51,13 +51,13 @@ pub fn part_two(input: &str) -> Option<u32> {
 
 // usize is a u16 or u32, which always fits in a u32
 #[cfg(any(target_pointer_width = "16", target_pointer_width = "32"))]
-fn my_thing(a: usize) -> Result<i32, Box<dyn Error>> {
+fn parse_i32(a: usize) -> Result<i32, Box<dyn Error>> {
     Ok(a as i32)
 }
 
 // usize is a u64, which might be too big
 #[cfg(target_pointer_width = "64")]
-fn my_thing(a: usize) -> Result<i32, Box<dyn Error>> {
+fn parse_i32(a: usize) -> Result<i32, Box<dyn Error>> {
     if a > i32::MAX as usize {
         panic!("size bad")
     } else {
