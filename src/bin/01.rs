@@ -8,16 +8,17 @@ pub fn part_one(input: &str) -> Option<u32> {
             .collect::<Vec<_>>()
     });
 
-    let mut a = out.clone().map(|v| v[0]).collect::<Vec<_>>();
-    let mut b = out.map(|v| v[1]).collect::<Vec<_>>();
+    let mut left_vec = out.clone().map(|v| v[0]).collect::<Vec<_>>();
+    let mut right_vec = out.map(|v| v[1]).collect::<Vec<_>>();
 
-    a.sort();
-    b.sort();
+    left_vec.sort();
+    right_vec.sort();
 
     Some(
-        a.iter()
-            .zip(b)
-            .map(|(a, b)| (a - b).abs())
+        left_vec
+            .iter()
+            .zip(right_vec)
+            .map(|(left, right)| (left - right).abs())
             .sum::<i32>()
             .try_into()
             .unwrap(),
