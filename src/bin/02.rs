@@ -69,34 +69,20 @@ pub fn part_two(input: &str) -> Option<u32> {
                     .enumerate()
                     .collect::<Vec<_>>();
 
-                let bads = solve(parsed.clone(), false);
+                let bads = solve(parsed.clone());
 
-                if bads
-                    .iter()
-                    .filter(|b| **b == true)
-                    .collect::<Vec<_>>()
-                    .len()
-                    == parsed.len()
-                {
+                if bads.iter().filter(|b| **b).collect::<Vec<_>>().len() == parsed.len() {
                     return 1;
                 }
 
-                for (idx, b) in bads.iter().enumerate() {
+                for (idx, _) in bads.iter().enumerate() {
                     let mut parsed = parsed.clone().iter().map(|(_, v)| *v).collect::<Vec<_>>();
 
                     parsed.remove(idx);
 
-                    let bads = solve(
-                        parsed.clone().into_iter().enumerate().collect::<Vec<_>>(),
-                        true,
-                    );
+                    let bads = solve(parsed.clone().into_iter().enumerate().collect::<Vec<_>>());
 
-                    if bads
-                        .iter()
-                        .filter(|b| **b == true)
-                        .collect::<Vec<_>>()
-                        .len()
-                        == parsed.clone().len()
+                    if bads.iter().filter(|b| **b).collect::<Vec<_>>().len() == parsed.clone().len()
                     {
                         return 1;
                     }
@@ -108,7 +94,7 @@ pub fn part_two(input: &str) -> Option<u32> {
     )
 }
 
-fn solve(parsed: Vec<(usize, i32)>, iter: bool) -> Vec<bool> {
+fn solve(parsed: Vec<(usize, i32)>) -> Vec<bool> {
     let mut increasing = None;
     let mut ret = vec![];
 
