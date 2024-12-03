@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 advent_of_code::solution!(1);
 
-pub fn part_one(input: &str) -> Option<u32> {
+pub fn part_one(input: &str) -> Option<i32> {
     let (mut left, mut right) = input
         .lines()
         .map(|l| {
@@ -23,13 +23,11 @@ pub fn part_one(input: &str) -> Option<u32> {
         left.iter()
             .zip(right)
             .map(|(left, right)| (*left - right).abs())
-            .sum::<i32>()
-            .try_into()
-            .unwrap(),
+            .sum::<i32>(),
     )
 }
 
-pub fn part_two(input: &str) -> Option<u32> {
+pub fn part_two(input: &str) -> Option<i32> {
     let mut map = HashMap::new();
     let mut left_arr = Vec::new();
 
@@ -48,9 +46,7 @@ pub fn part_two(input: &str) -> Option<u32> {
         left_arr
             .iter()
             .map(|l| l.parse::<i32>().unwrap() * (*map.get(l).unwrap_or(&0)))
-            .sum::<i32>()
-            .try_into()
-            .unwrap(),
+            .sum::<i32>(),
     )
 }
 

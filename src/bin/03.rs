@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use regex::Regex;
 
 advent_of_code::solution!(3);
@@ -6,6 +8,8 @@ pub fn part_one(input: &str) -> Option<u32> {
     let regex = Regex::new(r"mul\([0-9]{1,3},[0-9]{1,3}\)").unwrap();
     let regex2 = Regex::new(r"[0-9]{1,3},[0-9]{1,3}").unwrap();
     let captures = regex.find_iter(input);
+
+    let regex2 = Arc::new(regex2);
 
     Some(
         captures
@@ -32,6 +36,8 @@ pub fn part_two(input: &str) -> Option<u32> {
     let do_donts = do_dont.find_iter(input).collect::<Vec<_>>();
     let captures = regex.find_iter(input);
 
+    let regex2 = Arc::new(regex2);
+
     Some(
         captures
             .map(|c| {
@@ -53,8 +59,6 @@ pub fn part_two(input: &str) -> Option<u32> {
                     .split(",")
                     .map(|v| v.parse::<u32>().unwrap())
                     .collect::<Vec<_>>();
-
-                // println!("{} * {}", values[0], values[1]);
 
                 values[0] * values[1]
             })
