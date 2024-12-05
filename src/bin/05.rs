@@ -23,7 +23,7 @@ pub fn part_one(input: &str) -> Option<usize> {
             .next()
             .unwrap()
             .lines()
-            .map(|l| l.split(",").map(str::parse).filter_map(Result::ok))
+            .map(|l| l.split(",").flat_map(str::parse))
             .filter(|nums| {
                 nums.clone()
                     .is_sorted_by(|a, b| matches!(map.get(a), Some(rules_a) if rules_a.contains(b)))
@@ -57,7 +57,7 @@ pub fn part_two(input: &str) -> Option<usize> {
             .next()
             .unwrap()
             .lines()
-            .map(|l| l.split(",").map(str::parse).filter_map(Result::ok))
+            .map(|l| l.split(",").flat_map(str::parse))
             .filter(|nums| {
                 !nums
                     .clone()
