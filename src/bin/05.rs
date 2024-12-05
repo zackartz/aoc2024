@@ -1,4 +1,4 @@
-use std::{cmp, collections::HashMap, isize, rc::Rc};
+use std::{cmp, collections::HashMap};
 
 advent_of_code::solution!(5);
 
@@ -19,45 +19,21 @@ pub fn part_one(input: &str) -> Option<usize> {
         });
     }
 
-    let map = Rc::new(map);
-
     Some(
         parsed
             .next()
             .unwrap()
             .lines()
-            .map(|l| {
-                let nums = l
-                    .split(",")
-                    .map(str::parse)
-                    .filter_map(Result::ok)
-                    .collect::<Vec<isize>>();
-                let mut total = 0;
-
-                let mut ok = true;
-
-                for (idx, n) in nums.iter().enumerate() {
-                    if let Some(rules) = map.get(n) {
-                        if rules
-                            .iter()
-                            .map(|r| nums[0..idx].contains(r))
-                            .filter(|b| *b)
-                            .count()
-                            != 0
-                        {
-                            ok = false;
-                        }
-                    }
-                }
-
-                total += match ok {
-                    true => nums[nums.len() / 2] as usize,
-                    false => 0,
-                };
-
-                total
+            .map(|l| l.split(",").map(str::parse).filter_map(Result::ok))
+            .filter(|nums| {
+                nums.clone()
+                    .is_sorted_by(|a, b| matches!(map.get(a), Some(rules_a) if rules_a.contains(b)))
             })
-            .sum(),
+            .map(|nums| {
+                let v = nums.collect::<Vec<_>>();
+                v[v.len() / 2] as usize
+            })
+            .sum::<usize>(),
     )
 }
 
@@ -78,53 +54,24 @@ pub fn part_two(input: &str) -> Option<usize> {
         });
     }
 
-    let map = Rc::new(map);
-
     Some(
         parsed
             .next()
             .unwrap()
             .lines()
-            .map(|l| {
-                let nums = l
-                    .split(",")
-                    .map(str::parse)
-                    .filter_map(Result::ok)
-                    .collect::<Vec<isize>>();
-
-                let mut ok = true;
-
-                let mut bad = vec![];
-
-                for (idx, n) in nums.iter().enumerate() {
-                    if let Some(rules) = map.get(n) {
-                        let n_clone = nums.clone();
-                        if rules
-                            .iter()
-                            .map(|r| n_clone[0..idx].contains(r))
-                            .filter(|b| *b)
-                            .count()
-                            > 0
-                        {
-                            ok = false;
-                        }
-                    }
-                }
-
-                if !ok {
-                    bad.push(nums);
-                }
-
-                bad.into_iter()
-                    .map(|mut a| {
-                        a.sort_by(|a, b| match map.get(a) {
-                            Some(rules_a) if rules_a.contains(b) => cmp::Ordering::Less,
-
-                            _ => cmp::Ordering::Equal,
-                        });
-                        a[a.len() / 2] as usize
-                    })
-                    .sum::<usize>()
+            .map(|l| l.split(",").map(str::parse).filter_map(Result::ok))
+            .filter(|nums| {
+                !nums
+                    .clone()
+                    .is_sorted_by(|a, b| matches!(map.get(a), Some(rules_a) if rules_a.contains(b)))
+            })
+            .map(|nums| {
+                let mut v = nums.collect::<Vec<_>>();
+                v.sort_by(|a, b| match map.get(a) {
+                    Some(rules_a) if rules_a.contains(b) => cmp::Ordering::Less,
+                    _ => cmp::Ordering::Equal,
+                });
+                v[v.len() / 2] as usize
             })
             .sum::<usize>(),
     )
