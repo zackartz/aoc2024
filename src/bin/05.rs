@@ -8,11 +8,7 @@ pub fn part_one(input: &str) -> Option<usize> {
 
     if let Some(l) = parsed.next() {
         l.lines().for_each(|l| {
-            let ret = l
-                .split("|")
-                .map(str::parse)
-                .filter_map(Result::ok)
-                .collect::<Vec<isize>>();
+            let ret = l.split("|").flat_map(str::parse).collect::<Vec<isize>>();
 
             map.entry(ret[0]).or_insert_with(Vec::new).push(ret[1]);
         });
