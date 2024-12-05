@@ -14,8 +14,7 @@ pub fn part_one(input: &str) -> Option<usize> {
                 .filter_map(Result::ok)
                 .collect::<Vec<isize>>();
 
-            let e = map.entry(ret[0]).or_insert_with(Vec::new);
-            e.push(ret[1]);
+            map.entry(ret[0]).or_insert_with(Vec::new).push(ret[1]);
         });
     }
 
@@ -49,8 +48,7 @@ pub fn part_two(input: &str) -> Option<usize> {
                 .filter_map(Result::ok)
                 .collect::<Vec<isize>>();
 
-            let e = map.entry(ret[0]).or_insert_with(Vec::new);
-            e.push(ret[1]);
+            map.entry(ret[0]).or_insert_with(Vec::new).push(ret[1]);
         });
     }
 
