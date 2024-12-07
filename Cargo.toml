@@ -32,3 +32,4 @@ tinyjson = "2.5.1"
 
 rayon = "*"
 hashbrown = { version = "*", features = ["rayon"] }
+itertools = "0.13.0"
