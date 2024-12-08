@@ -71,7 +71,6 @@ pub fn part_two(input: &str) -> Option<isize> {
             .enumerate()
             .par_bridge()
             .map(|(idx, l)| {
-                println!("[{idx}/{line_count}] line: {l} {:?}", t.elapsed());
                 let mut parse = l.split(": ");
                 let sum = parse.next().unwrap().parse::<isize>().unwrap();
                 let digits = parse
@@ -81,41 +80,42 @@ pub fn part_two(input: &str) -> Option<isize> {
                     .flat_map(str::parse)
                     .collect::<Vec<isize>>();
 
-                let num_ops = digits.len() - 1;
+                let num_ops = digits.len();
+                let parsed = 3_isize.pow(num_ops as u32);
 
-                let perms = [Operation::Mul, Operation::Add, Operation::Or];
-                let perm_list = perms
-                    .iter()
-                    .cartesian_product(0..num_ops)
-                    .combinations(num_ops);
-
-                // println!("perm_list: {perm_list:?}");
-                'outer: for perm in perm_list {
-                    let mut idx = 0;
-                    let mut total = 0;
-                    let mut current_op = Operation::Add;
-
-                    while idx < digits.len() {
-                        match current_op {
-                            Operation::Add => total += digits[idx],
-                            Operation::Mul => total *= digits[idx],
-                            Operation::Or => {
-                                total = format!("{total}{}", digits[idx]).parse().unwrap()
-                            }
+                'outer: for i in 0..parsed {
+                    let mut total = digits[0];
+                    let opstr = format_radix(i as u64, 3);
+                    for (idx, z) in digits.iter().skip(1).enumerate() {
+                        let mut c = b'0';
+                        if ((opstr.len() as isize) - 1) - (idx as isize) > 0 {
+                            c = *opstr
+                                .as_bytes()
+                                .get(((opstr.len() as usize) - 1) - idx)
+                                .unwrap_or(&b'0');
                         }
-                        if idx < num_ops {
-                            let x = perm.iter().find(|(_, id)| *id == idx);
-                            if x.is_none() {
-                                continue 'outer;
+                        match c as char {
+                            '0' => {
+                                total *= z;
                             }
-
-                            current_op = *x.unwrap().0;
+                            '1' => {
+                                total += z;
+                            }
+                            '2' => {
+                                total = (total.to_string() + &z.to_string())
+                                    .parse::<isize>()
+                                    .unwrap();
+                            }
+                            _ => panic!("aaaaah!"),
                         }
-                        idx += 1;
                     }
 
-                    if sum == total {
-                        return total;
+                    if total > sum {
+                        continue 'outer;
+                    }
+
+                    if total == sum {
+                        return sum;
                     }
                 }
 
@@ -123,6 +123,22 @@ pub fn part_two(input: &str) -> Option<isize> {
             })
             .sum(),
     )
+}
+
+fn format_radix(mut x: u64, radix: u32) -> String {
+    let mut result = vec![];
+
+    loop {
+        let m = x % radix as u64;
+        x /= radix as u64;
+
+        // will panic if you use a bad radix (< 2 or > 36).
+        result.push(std::char::from_digit(m as u32, radix).unwrap());
+        if x == 0 {
+            break;
+        }
+    }
+    result.into_iter().rev().collect()
 }
 
 #[cfg(test)]
