@@ -14,6 +14,10 @@ doctest = false
 inherits = "release"
 debug = 1
 
+[profile.release]
+codegen-units = 1
+lto = "fat"
+
 [features]
 dhat-heap = ["dhat"]
 today = ["chrono"]
@@ -33,3 +37,6 @@ tinyjson = "2.5.1"
 rayon = "*"
 hashbrown = { version = "*", features = ["rayon"] }
 itertools = "0.13.0"
+
+[target.'cfg(not(target_env = "msvc"))'.dependencies]
+jemallocator = "0.3.2"

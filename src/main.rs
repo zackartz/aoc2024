@@ -6,6 +6,13 @@ use advent_of_code::template::Day;
 #[cfg(feature = "today")]
 use std::process;
 
+#[cfg(not(target_env = "msvc"))]
+use jemallocator::Jemalloc;
+
+#[cfg(not(target_env = "msvc"))]
+#[global_allocator]
+static GLOBAL: Jemalloc = Jemalloc;
+
 mod args {
     use advent_of_code::template::Day;
     use std::process;

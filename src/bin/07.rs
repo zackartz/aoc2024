@@ -1,6 +1,3 @@
-use std::time::SystemTime;
-
-use itertools::Itertools;
 use rayon::iter::{ParallelBridge, ParallelIterator};
 
 advent_of_code::solution!(7);
@@ -55,22 +52,12 @@ fn get_b_digit(n: isize, d: isize) -> bool {
     (n >> d) & 1 != 0
 }
 
-#[derive(Debug, Hash, PartialEq, PartialOrd, Ord, Eq, Clone, Copy)]
-enum Operation {
-    Add,
-    Mul,
-    Or,
-}
-
 pub fn part_two(input: &str) -> Option<isize> {
-    let t = SystemTime::now();
-    let line_count = input.lines().count();
     Some(
         input
             .lines()
-            .enumerate()
             .par_bridge()
-            .map(|(idx, l)| {
+            .map(|l| {
                 let mut parse = l.split(": ");
                 let sum = parse.next().unwrap().parse::<isize>().unwrap();
                 let digits = parse
@@ -88,24 +75,17 @@ pub fn part_two(input: &str) -> Option<isize> {
                     let opstr = format_radix(i as u64, 3);
                     for (idx, z) in digits.iter().skip(1).enumerate() {
                         let mut c = b'0';
-                        if ((opstr.len() as isize) - 1) - (idx as isize) > 0 {
+                        let strlen = opstr.len() as isize;
+                        if ((strlen) - 1) - (idx as isize) > 0 {
                             c = *opstr
                                 .as_bytes()
-                                .get(((opstr.len() as usize) - 1) - idx)
+                                .get((strlen as usize - 1) - idx)
                                 .unwrap_or(&b'0');
                         }
                         match c as char {
-                            '0' => {
-                                total *= z;
-                            }
-                            '1' => {
-                                total += z;
-                            }
-                            '2' => {
-                                total = (total.to_string() + &z.to_string())
-                                    .parse::<isize>()
-                                    .unwrap();
-                            }
+                            '0' => total *= z,
+                            '1' => total += z,
+                            '2' => total = total * 10_isize.pow(z.ilog10() + 1) + z,
                             _ => panic!("aaaaah!"),
                         }
                     }
@@ -126,7 +106,7 @@ pub fn part_two(input: &str) -> Option<isize> {
 }
 
 fn format_radix(mut x: u64, radix: u32) -> String {
-    let mut result = vec![];
+    let mut result = Vec::with_capacity(15);
 
     loop {
         let m = x % radix as u64;

@@ -82,7 +82,7 @@
           packages =
             (commonArgs.nativeBuildInputs or [])
             ++ (commonArgs.buildInputs or [])
-            ++ [pkgs.rust-analyzer-unwrapped pkgs.aoc-cli];
+            ++ [pkgs.rust-analyzer-unwrapped pkgs.aoc-cli pkgs.samply];
 
           RUST_SRC_PATH = "${
             pkgs.rust-bin.${rustChannel}.${rustVersion}.rust-src
