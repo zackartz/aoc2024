@@ -52,6 +52,7 @@ fn get_b_digit(n: isize, d: isize) -> bool {
     (n >> d) & 1 != 0
 }
 
+
 pub fn part_two(input: &str) -> Option<isize> {
     Some(
         input
